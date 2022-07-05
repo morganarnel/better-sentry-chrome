@@ -1,0 +1,27 @@
+{
+    "name": "Better Sentry",
+    "version": "0.0.1",
+    "manifest_version": 2,
+    "description": "Chrome extension to make Sentry better",
+    "homepage_url": "https://github.com/morganarnel/better-sentry-chrome",
+    "content_scripts": [
+        {
+            "matches": [
+                "http://sentry.io/*",
+                "https://sentry.io/*"
+            ],
+            "js": [
+                "background.js"
+            ],
+            "run_at": "document_end"
+        }
+    ],
+    "browser_action": {
+        "default_title": "Better Sentry"
+    },
+    "permissions": [
+        "https://sentry.io/*",
+        "http://sentry.io/*",
+        "tabs"
+    ]
+}
