@@ -15,11 +15,29 @@ function forceNavigation(e) {
 
 window.addEventListener('load', () => {
     console.info('[Better Sentry] Loaded');
+    const currentURL = window.location.href;
+    const referrer = document.referrer;
+
+    if (currentURL.startsWith('https://sentry.io/organizations/') && currentURL.includes('?project=')) {
+        const params = (new URL(document.location)).searchParams;
+        let projectId = params.get('project');
+        let lastProjectId = localStorage.getItem('last_project');
+
+        if (lastProjectId && lastProjectId !== projectId && (referrer === '' || referrer === 'https://sentry.io')) {
+            // First time accessing page, and current project is not our last accessed project so redirect back into last project
+            window.location.href = window.location.href.split('?')[0] + '?project=' + lastProjectId
+        } else if (projectId) {
+            if (projectId !== lastProjectId) {
+                localStorage.setItem('last_project', projectId);
+                lastProjectId = projectId;
+            }
+        }
+    }
 
     setInterval(() => {
         const params = (new URL(document.location)).searchParams;
-        const projectId = params.get('project');
-        let lastProjectId = localStorage.getItem('last_project')
+        let projectId = params.get('project');
+        let lastProjectId = localStorage.getItem('last_project');
 
         if (projectId) {
             if (projectId !== lastProjectId) {
@@ -27,7 +45,6 @@ window.addEventListener('load', () => {
                 lastProjectId = projectId;
             }
         }
-
         if (lastProjectId) {
             const sidebarItems = document.querySelectorAll('a[id|="sidebar-item"]');
             sidebarItems.forEach(function (sidebarItem) {
@@ -40,5 +57,5 @@ window.addEventListener('load', () => {
                 }
             });
         }
-    }, 2000);
+    }, 2500);
 });
